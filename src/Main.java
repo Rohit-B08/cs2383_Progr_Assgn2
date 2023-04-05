@@ -15,6 +15,16 @@ public class Main {
                 new DirectedGraph.Edge(1, 1));
 
         DirectedGraph graph = new DirectedGraph(edges);
+        System.out.println();
+        System.out.println("Total number of vertices: " + graph.totalVertices());
+        System.out.println("Total number of edges: " + graph.totalEdges());
+        System.out.println("The Indegree of the current vertex: " + graph.vertexIndegree(4));
+        System.out.println("The Outdegree of the current vertex: " + graph.vertexOutdegree(2));
+        graph.addVertex(6);
+        graph.addEdge(new DirectedGraph.Edge(6, 1));
+        graph.showGraph();
+        graph.removeVertex(1);
+        graph.removeEdge(2, 4);
         graph.showGraph();
     }
 }
