@@ -1,7 +1,7 @@
 import java.util.Arrays;
 import java.util.List;
 
-public class Main {
+public class DirectedGraphDriver {
 
     public static void main(String[] args) {
         List<DirectedGraph.Edge> edges = Arrays.asList(new DirectedGraph.Edge(0, 1),
