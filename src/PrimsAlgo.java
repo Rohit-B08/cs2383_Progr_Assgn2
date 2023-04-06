@@ -11,16 +11,31 @@ public class PrimsAlgo {
 
     public void minimumSpanningTree() {
         Node node = null;
+
+//        ArrayList<String> visited = new ArrayList<>();
         ArrayList<Node> temp = new ArrayList<>();
         String currentEdge = "";
         int counter = 0;
         currentEdge = startingEdge;
         while(counter < graph.size()) {
-
+            boolean added = false;
             for(Node edge : graph) {
                 if(edge.getSource().equalsIgnoreCase(currentEdge)) {
                     temp.add(edge);
+                    added = true;
+//                    visited.add(edge.getSource());
                     counter++;
+                }
+
+            }
+            if(!added) {
+                for(Node edge : graph) {
+                    if (edge.getDestination().equalsIgnoreCase(currentEdge)) {
+                        temp.add(edge);
+
+//                    visited.add(edge.getSource());
+                        counter++;
+                    }
                 }
             }
             int min = 0;
@@ -35,10 +50,16 @@ public class PrimsAlgo {
                     node = edge;
                 }
             }
-            assert node != null;
-            System.out.println(node);
-            currentEdge = node.getDestination();
-            temp.remove(node);
+            if(added) {
+                System.out.println(node);
+                currentEdge = node.getDestination();
+                temp.remove(node);
+            }
+            else {
+                System.out.println(node);
+                currentEdge = node.getSource();
+                temp.remove(node);
+            }
         }
     }
 }
