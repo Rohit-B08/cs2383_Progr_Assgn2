@@ -4,7 +4,7 @@ import java.util.List;
 public class DirectedGraph {
 
     static class Edge {
-        Integer source, direction;
+        int source, direction;
 
         Edge(int source, int direction) {
             this.source = source;
