@@ -1,6 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 public class Kruskal {
 
@@ -14,122 +12,108 @@ public class Kruskal {
             this.destination = destination;
             this.weight = weight;
         }
-
-        public char getSource() {
-            return source;
-        }
-
-        public char getDestination() {
-            return destination;
-        }
-
-        public int getWeight() {
-            return weight;
-        }
-
-        @Override
-        public String toString() {
-            return "Edge{" +
-                    "source=" + source +
-                    ", destination=" + destination +
-                    ", weight=" + weight +
-                    '}';
-        }
     }
 
-    private ArrayList<Edge> graph;
+    private final ArrayList<Edge> graph;
 
     public Kruskal(ArrayList<Edge> graph) {
         this.graph = graph;
     }
 
-    public void sortGraph() {
-        graph.sort(Comparator.comparingInt(o -> o.weight));
-    }
-
-    public void enqueue() {
-
-    }
-
-    //Function to check which value has the lowest weight
-    public Edge peek() {
-        int lowestWeight = Integer.MAX_VALUE;
-        Edge lowest = null;
-
-        for (Edge edge : graph) {
-            if (lowestWeight == edge.weight && (lowest != null ? lowest.source : 0) < edge.source) {
-                lowest = edge;
-            } else if (lowestWeight > edge.weight) {
-                lowestWeight = edge.weight;
-                lowest = edge;
-            }
-        }
-        return lowest;
-    }
-
-    public Edge dequeue() {
-        Edge lowest = peek();
-
-        for (int i = graph.indexOf(lowest) + 1; i < graph.size(); i++) {
-            Edge current = graph.get(i);
-            graph.set(i-1, current);
-        }
-        if (graph.size() > 1) {
-            graph.remove(graph.size()-1);
-        } else {
-            graph = null;
-        }
-        return lowest;
-    }
-
     public void minSpanTree() {
-        ArrayList<Character> visited = new ArrayList<>();
-        ArrayList<Character> toVisit = new ArrayList<>();
+        ArrayList<Edge> tree = new ArrayList<>();
+        Edge minEdge = null;
 
-        for (Edge edge : graph) {
-            toVisit.add(edge.source);
+        for (int i = 0; i < graph.size(); i++) { //loop through the graph
+            int minWeight = Integer.MAX_VALUE;
+            for (Edge edge : graph) { //loop through the edges in the graph
+                boolean dupe1 = false, dupe2 = false;
+                if (minWeight > edge.weight) { //Determine if there is a lower weighted edge
+                    for (Edge vertex : tree) {
+                        if (vertex.source == edge.source || vertex.destination == edge.source) {
+                            dupe1 = true;
+                        }
+                        if (vertex.source == edge.destination || vertex.destination == edge.destination) {
+                            dupe2 = true;
+                        }
+                    }
+                    if (!dupe1 || !dupe2) { //If the edge is new, swap
+                        minWeight = edge.weight; //Swap
+                        minEdge = edge;
+                    }
+                }
+            }
+
+            boolean sourceDupe = false, destinationDupe = false;
+            if (minEdge != null) {
+                for (Edge edge : tree) {
+                    if (edge.source == minEdge.source) {
+                        sourceDupe = true;
+                    }
+                    if (edge.destination == minEdge.destination) {
+                        destinationDupe = true;
+                    }
+                }
+                if (!sourceDupe || !destinationDupe) { //Check if it's a duplicate
+                    tree.add(minEdge);
+                }
+            }
+
         }
 
-        while (!toVisit.isEmpty()) {
-            Edge removedEdge = dequeue();
-            if (!visited.contains(removedEdge.source) && !visited.contains(removedEdge.destination)) {
-                visited.add(removedEdge.source);
-                visited.add(removedEdge.destination);
-                toVisit.removeAll(Collections.singleton(removedEdge.source));
-                toVisit.removeAll(Collections.singleton(removedEdge.destination));
-            }
+        for (Edge edge : tree) {
+            System.out.println(edge.source + ", " + edge.destination + ", " + edge.weight);
         }
     }
 
     public static void main(String[] args) {
-        Edge edge1 = new Edge('A', 'B', 9);
-        Edge edge2 = new Edge('A', 'D', 15);
-        Edge edge3 = new Edge('A', 'E', 20);
-        Edge edge4 = new Edge('B', 'C', 17);
-        Edge edge5 = new Edge('B', 'D', 7);
-        Edge edge6 = new Edge('C', 'D', 14);
-        Edge edge7 = new Edge('C', 'F', 11);
-        Edge edge8 = new Edge('D', 'E', 5);
-        Edge edge9 = new Edge('E', 'F', 12);
-        Edge edge10 = new Edge('E', 'G', 10);
-        Edge edge11 = new Edge('F', 'G', 8);
+        Edge Edge1 = new Edge('A', 'B', 9);
+        Edge Edge2 = new Edge('A', 'D', 15);
+        Edge Edge3 = new Edge('A', 'E', 20);
+        Edge Edge4 = new Edge('B', 'C', 17);
+        Edge Edge5 = new Edge('B', 'D', 7);
+        Edge Edge6 = new Edge('B', 'A', 9);
+        Edge Edge7 = new Edge('C', 'B', 17);
+        Edge Edge8 = new Edge('C', 'D', 14);
+        Edge Edge9 = new Edge('C', 'F', 12);
+        Edge Edge10 = new Edge('D', 'A', 15);
+        Edge Edge11 = new Edge('D', 'B', 7);
+        Edge Edge12 = new Edge('D', 'C', 14);
+        Edge Edge13 = new Edge('D', 'E', 5);
+        Edge Edge14 = new Edge('E', 'A', 20);
+        Edge Edge15 = new Edge('E', 'D', 5);
+        Edge Edge16 = new Edge('E', 'F', 12);
+        Edge Edge17 = new Edge('E', 'G', 10);
+        Edge Edge18 = new Edge('F', 'C', 11);
+        Edge Edge19 = new Edge('F', 'E', 12);
+        Edge Edge20 = new Edge('F', 'G', 8);
+        Edge Edge21 = new Edge('G', 'E', 10);
+        Edge Edge22 = new Edge('G', 'F', 8);
 
         ArrayList<Edge> graph = new ArrayList<>();
-        graph.add(edge1);
-        graph.add(edge2);
-        graph.add(edge3);
-        graph.add(edge4);
-        graph.add(edge5);
-        graph.add(edge6);
-        graph.add(edge7);
-        graph.add(edge8);
-        graph.add(edge9);
-        graph.add(edge10);
-        graph.add(edge11);
-
+        graph.add(Edge1);
+        graph.add(Edge2);
+        graph.add(Edge3);
+        graph.add(Edge4);
+        graph.add(Edge5);
+        graph.add(Edge6);
+        graph.add(Edge7);
+        graph.add(Edge8);
+        graph.add(Edge9);
+        graph.add(Edge10);
+        graph.add(Edge11);
+        graph.add(Edge12);
+        graph.add(Edge13);
+        graph.add(Edge14);
+        graph.add(Edge15);
+        graph.add(Edge16);
+        graph.add(Edge17);
+        graph.add(Edge18);
+        graph.add(Edge19);
+        graph.add(Edge20);
+        graph.add(Edge21);
+        graph.add(Edge22);
         Kruskal pain = new Kruskal(graph);
         pain.minSpanTree();
     }
 }
-
-

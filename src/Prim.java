@@ -59,7 +59,7 @@ public class Prim {
                         destinationDupe = true;
                     }
                 }
-                if (!sourceDupe && !destinationDupe) { //Check if it's a duplicate
+                if (!sourceDupe || !destinationDupe) { //Check if it's a duplicate
                     tree.add(minEdge);
                     startingVertex = (minEdge).destination;
                 }
