@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class Kruskal {
 
@@ -14,56 +16,80 @@ public class Kruskal {
         }
     }
 
-    private final ArrayList<Edge> graph;
+    static class Subset {
+        char parent;
+        int rank;
 
-    public Kruskal(ArrayList<Edge> graph) {
-        this.graph = graph;
+        public Subset(char parent, int rank) {
+            this.parent = parent;
+            this.rank = rank;
+        }
     }
 
-    public void minSpanTree() {
+    public static void connect(ArrayList<Subset> subsets, char x, char y) {
+        char rootX = findRoot(subsets, x);
+        char rootY = findRoot(subsets, y);
+
+        int indexX = 0, indexY = 0;
+        for (int i = 0; i < subsets.size(); i++) {
+            if (subsets.get(i).parent == rootX) {
+                indexX = i;
+            }
+            if (subsets.get(i).parent == rootY) {
+                indexY = i;
+            }
+        }
+
+        if (subsets.get(indexY).rank < subsets.get(indexX).rank) {
+            subsets.get(indexY).parent = rootX;
+        } else if (subsets.get(indexY).rank > subsets.get(indexX).rank) {
+            subsets.get(indexX).parent = rootY;
+        } else {
+            subsets.get(indexY).parent = rootX;
+            subsets.get(indexX).rank++;
+        }
+    }
+
+    public static char findRoot(ArrayList<Subset> subsets, char i) {
+        if (subsets.get((int) i - 65).parent == i) {
+            return subsets.get((int) i - 65).parent;
+        }
+
+        subsets.get((int) i - 65).parent = findRoot(subsets, subsets.get((int) i - 65).parent);
+
+        return i;
+    }
+
+    public static void minSpanTree(int vertices, List<Edge> graph) {
         ArrayList<Edge> tree = new ArrayList<>();
-        Edge minEdge = null;
+        ArrayList<Subset> subsets = new ArrayList<>();
 
-        for (int i = 0; i < graph.size(); i++) { //loop through the graph
-            int minWeight = Integer.MAX_VALUE;
-            for (Edge edge : graph) { //loop through the edges in the graph
-                boolean dupe1 = false, dupe2 = false;
-                if (minWeight > edge.weight) { //Determine if there is a lower weighted edge
-                    for (Edge vertex : tree) {
-                        if (vertex.source == edge.source || vertex.destination == edge.source) {
-                            dupe1 = true;
-                        }
-                        if (vertex.source == edge.destination || vertex.destination == edge.destination) {
-                            dupe2 = true;
-                        }
-                    }
-                    if (!dupe1 || !dupe2) { //If the edge is new, swap
-                        minWeight = edge.weight; //Swap
-                        minEdge = edge;
-                    }
-                }
-            }
-
-            boolean sourceDupe = false, destinationDupe = false;
-            if (minEdge != null) {
-                for (Edge edge : tree) {
-                    if (edge.source == minEdge.source) {
-                        sourceDupe = true;
-                    }
-                    if (edge.destination == minEdge.destination) {
-                        destinationDupe = true;
-                    }
-                }
-                if (!sourceDupe || !destinationDupe) { //Check if it's a duplicate
-                    tree.add(minEdge);
-                }
-            }
-
+        for (int i = 0; i < vertices; i++) {
+            subsets.add(new Subset((char) (i+65), 0));
         }
 
-        for (Edge edge : tree) {
-            System.out.println(edge.source + ", " + edge.destination + ", " + edge.weight);
+        int j = 0, numberOfEdges = 0;
+        while (numberOfEdges < vertices - 1) {
+            Edge nextEdge = graph.get(j);
+            char x = findRoot(subsets, nextEdge.source);
+            char y = findRoot(subsets, nextEdge.destination);
+
+            if (x != y) {
+                tree.add(nextEdge);
+                connect(subsets, x, y);
+                numberOfEdges++;
+            }
+            j++;
         }
+
+        System.out.println(
+                "Following are the edges of the constructed minimum spanning tree:");
+        int minCost = 0;
+        for (int i = 0; i < numberOfEdges; i++) {
+            System.out.println(tree.get(i).source + " -- " + tree.get(i).destination + " == " + tree.get(i).weight);
+            minCost += tree.get(i).weight;
+        }
+        System.out.println("Total cost of tree: " + minCost);
     }
 
     public static void main(String[] args) {
@@ -72,23 +98,14 @@ public class Kruskal {
         Edge Edge3 = new Edge('A', 'E', 20);
         Edge Edge4 = new Edge('B', 'C', 17);
         Edge Edge5 = new Edge('B', 'D', 7);
-        Edge Edge6 = new Edge('B', 'A', 9);
-        Edge Edge7 = new Edge('C', 'B', 17);
         Edge Edge8 = new Edge('C', 'D', 14);
-        Edge Edge9 = new Edge('C', 'F', 12);
-        Edge Edge10 = new Edge('D', 'A', 15);
-        Edge Edge11 = new Edge('D', 'B', 7);
-        Edge Edge12 = new Edge('D', 'C', 14);
+        Edge Edge9 = new Edge('C', 'F', 11);
         Edge Edge13 = new Edge('D', 'E', 5);
-        Edge Edge14 = new Edge('E', 'A', 20);
-        Edge Edge15 = new Edge('E', 'D', 5);
         Edge Edge16 = new Edge('E', 'F', 12);
         Edge Edge17 = new Edge('E', 'G', 10);
-        Edge Edge18 = new Edge('F', 'C', 11);
         Edge Edge19 = new Edge('F', 'E', 12);
         Edge Edge20 = new Edge('F', 'G', 8);
-        Edge Edge21 = new Edge('G', 'E', 10);
-        Edge Edge22 = new Edge('G', 'F', 8);
+        int vertices = 7;
 
         ArrayList<Edge> graph = new ArrayList<>();
         graph.add(Edge1);
@@ -96,24 +113,15 @@ public class Kruskal {
         graph.add(Edge3);
         graph.add(Edge4);
         graph.add(Edge5);
-        graph.add(Edge6);
-        graph.add(Edge7);
         graph.add(Edge8);
         graph.add(Edge9);
-        graph.add(Edge10);
-        graph.add(Edge11);
-        graph.add(Edge12);
         graph.add(Edge13);
-        graph.add(Edge14);
-        graph.add(Edge15);
         graph.add(Edge16);
         graph.add(Edge17);
-        graph.add(Edge18);
         graph.add(Edge19);
         graph.add(Edge20);
-        graph.add(Edge21);
-        graph.add(Edge22);
-        Kruskal pain = new Kruskal(graph);
-        pain.minSpanTree();
+
+        graph.sort(Comparator.comparingInt(o -> o.weight));
+        minSpanTree(vertices, graph);
     }
 }

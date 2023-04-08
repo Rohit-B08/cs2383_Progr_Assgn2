@@ -81,7 +81,7 @@ public class Prim {
         Edge Edge6 = new Edge('B', 'A', 9);
         Edge Edge7 = new Edge('C', 'B', 17);
         Edge Edge8 = new Edge('C', 'D', 14);
-        Edge Edge9 = new Edge('C', 'F', 12);
+        Edge Edge9 = new Edge('C', 'F', 11);
         Edge Edge10 = new Edge('D', 'A', 15);
         Edge Edge11 = new Edge('D', 'B', 7);
         Edge Edge12 = new Edge('D', 'C', 14);
